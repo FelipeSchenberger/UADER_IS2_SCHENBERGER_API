@@ -1,4 +1,5 @@
 import argparse
+import sys
 import openai
 
 # Configura tu API Key de OpenAI
@@ -7,7 +8,7 @@ openai.api_key = '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'
 # Variable global para almacenar el buffer de consultas
 buffer_consultas = []
 
-def interactuar_con_chatGPT(consulta):
+def interactuar_con_chat_gpt(consulta):
     """
     Función para interactuar con el modelo de ChatGPT y mostrar la respuesta.
     """
@@ -38,7 +39,10 @@ def interactuar_con_chatGPT(consulta):
         # Imprimir la respuesta de ChatGPT
         print("chatGPT: " + response.choices[0].message.content)
 
-    except Exception as e:
+    except KeyboardInterrupt:
+        print("\nSaliendo del programa...")
+        sys.exit(0)
+    except openai.OpenAIError as e:
         print("Ocurrió un error al interactuar con ChatGPT:", e)
 
 def manejar_entrada_usuario():
@@ -53,7 +57,7 @@ def manejar_entrada_usuario():
 
     except KeyboardInterrupt:
         print("\nSaliendo del programa...")
-        exit()
+        sys.exit(0)
 
 def main():
     """
@@ -85,13 +89,13 @@ def main():
                     # Interactuar con ChatGPT
                     if modo_conversacion:
                         # Usar el buffer de consultas para la interacción
-                        consulta_para_chatGPT = "\n".join(buffer_consultas)
+                        consulta_para_chat_gpt = "\n".join(buffer_consultas)
                     else:
-                        consulta_para_chatGPT = consulta
+                        consulta_para_chat_gpt = consulta
 
-                    interactuar_con_chatGPT(consulta_para_chatGPT)
+                    interactuar_con_chat_gpt(consulta_para_chat_gpt)
 
-                except Exception as e:
+                except openai.OpenAIError as e:
                     print("Ocurrió un error al tratar la consulta:", e)
             else:
                 print("La consulta está vacía.")

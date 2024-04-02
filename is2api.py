@@ -8,6 +8,9 @@ openai.api_key = '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'
 buffer_consultas = []
 
 def interactuar_con_chatGPT(consulta):
+    """
+    Función para interactuar con el modelo de ChatGPT y mostrar la respuesta.
+    """
     try:
         # Preparar los mensajes para enviar a ChatGPT
         context = ""
@@ -38,8 +41,10 @@ def interactuar_con_chatGPT(consulta):
     except Exception as e:
         print("Ocurrió un error al interactuar con ChatGPT:", e)
 
-# Función para manejar la entrada del usuario
 def manejar_entrada_usuario():
+    """
+    Función para manejar la entrada del usuario.
+    """
     try:
         # Leer la entrada del usuario
         consulta = input("Ingrese su consulta (o 'salir' para terminar): ")
@@ -50,8 +55,10 @@ def manejar_entrada_usuario():
         print("\nSaliendo del programa...")
         exit()
 
-# Función principal
 def main():
+    """
+    Función principal para ejecutar el programa.
+    """
     # Configurar argumento de línea de comandos
     parser = argparse.ArgumentParser(description='Procesa las consultas del usuario.')
     parser.add_argument('--convers', action='store_true', help='Modo de conversación')

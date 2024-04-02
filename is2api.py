@@ -1,10 +1,11 @@
+import argparse
 import openai
 
 # Configura tu API Key de OpenAI
 openai.api_key = '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'
 
-# Variable global para almacenar la última consulta
-ultima_consulta = ""
+# Variable global para almacenar el buffer de consultas
+buffer_consultas = []
 
 def interactuar_con_chatGPT(consulta):
     try:
@@ -28,6 +29,9 @@ def interactuar_con_chatGPT(consulta):
             presence_penalty=0
         )
 
+        # Agregar la respuesta de ChatGPT al buffer de consultas
+        buffer_consultas.append(response.choices[0].message.content)
+
         # Imprimir la respuesta de ChatGPT
         print("chatGPT: " + response.choices[0].message.content)
 
@@ -36,18 +40,9 @@ def interactuar_con_chatGPT(consulta):
 
 # Función para manejar la entrada del usuario
 def manejar_entrada_usuario():
-    global ultima_consulta
     try:
         # Leer la entrada del usuario
         consulta = input("Ingrese su consulta (o 'salir' para terminar): ")
-
-        # Si la consulta es vacía y hay una última consulta almacenada, recuperarla
-        if not consulta.strip() and ultima_consulta:
-            consulta = ultima_consulta
-            print("Consulta recuperada:", consulta)
-
-        # Almacenar la consulta como la última consulta
-        ultima_consulta = consulta
 
         return consulta
 
@@ -57,6 +52,17 @@ def manejar_entrada_usuario():
 
 # Función principal
 def main():
+    # Configurar argumento de línea de comandos
+    parser = argparse.ArgumentParser(description='Procesa las consultas del usuario.')
+    parser.add_argument('--convers', action='store_true', help='Modo de conversación')
+    args = parser.parse_args()
+
+    modo_conversacion = args.convers
+
+    # Verificar si se ha activado el modo de conversación
+    if modo_conversacion:
+        print("Modo de conversación activado.")
+
     while True:
         try:
             # Solicitar consulta al usuario
@@ -69,11 +75,14 @@ def main():
             # Verificar si la consulta tiene texto
             if consulta.strip():
                 try:
-                    # Imprimir la consulta
-                    print("You: " + consulta)
-
                     # Interactuar con ChatGPT
-                    interactuar_con_chatGPT(consulta)
+                    if modo_conversacion:
+                        # Usar el buffer de consultas para la interacción
+                        consulta_para_chatGPT = "\n".join(buffer_consultas)
+                    else:
+                        consulta_para_chatGPT = consulta
+
+                    interactuar_con_chatGPT(consulta_para_chatGPT)
 
                 except Exception as e:
                     print("Ocurrió un error al tratar la consulta:", e)
